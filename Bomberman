@@ -1,0 +1,780 @@
+/*Este é um programa que simula o jogo do bomberman em texto*/
+
+
+#include<stdio.h>
+#include<math.h>
+#include<ctype.h>
+#include<conio.h>
+#include<windows.h>
+#include<string.h>
+#include<time.h>
+#include<stddef.h>
+
+typedef struct bomberman
+{
+    int x,y,vida;
+} TIPO_BOMBER;
+
+typedef struct inimig
+{
+    int x,y, vivo;
+} TIPO_INIMIG;
+
+typedef struct strbomba
+{
+    int x,y,tempo, quantidade;
+} TIPO_BOMBA;
+
+void goToXY(int x, int y)
+{
+    COORD p= {x,y};
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),p);
+}
+
+
+void imprimir(char matrix[15][9])
+{
+    int  i, j, i2, j2;
+    char tempArqChar;
+    for(i=0; i<15; i++)
+        for(j=0; j<9; j++)
+        {
+
+            tempArqChar = matrix[i][j];
+            i2 = i*4;
+            j2 = j*2;
+            switch(tempArqChar)
+            {
+            case 'B':
+                goToXY(i2, j2);
+                printf("( ");
+                goToXY(i2+2, j2);
+                printf("0");
+                goToXY(i2+3, j2);
+                printf(")");
+
+                goToXY(i2,j2+1);
+                printf(" ");
+                goToXY(i2+1, j2+1);
+                printf("|");
+                goToXY(i2+2, j2+1);
+                printf("|");
+                goToXY(i2+3, j2+1);
+                printf(" ");
+                break;
+
+            case 'O':
+                goToXY(i2, j2);
+                printf(".");
+                goToXY(i2+1, j2);
+                printf(".");
+                goToXY(i2+2, j2);
+                printf(".");
+                goToXY(i2+3, j2);
+                printf(".");
+
+                goToXY(i2,j2+1);
+                printf(".");
+                goToXY(i2+1, j2+1);
+                printf(".");
+                goToXY(i2+2, j2+1);
+                printf(".");
+                goToXY(i2+3, j2+1);
+                printf(".");
+                break;
+
+            case 'M':
+                goToXY(i2, j2);
+                printf("(");
+                goToXY(i2+1, j2);
+                printf("q");
+                goToXY(i2+2, j2);
+                printf("q");
+                goToXY(i2+3, j2);
+                printf(")");
+
+                goToXY(i2,j2+1);
+                printf("~");
+                goToXY(i2+1, j2+1);
+                printf("~");
+                goToXY(i2+2, j2+1);
+                printf("~");
+                goToXY(i2+3, j2+1);
+                printf("~");
+                break;
+
+            case 'P':
+                goToXY(i2, j2);
+                printf("#");
+                goToXY(i2+1, j2);
+                printf("#");
+                goToXY(i2+2, j2);
+                printf("#");
+                goToXY(i2+3, j2);
+                printf("#");
+
+                goToXY(i2,j2+1);
+                printf("#");
+                goToXY(i2+1, j2+1);
+                printf("#");
+                goToXY(i2+2, j2+1);
+                printf("#");
+                goToXY(i2+3, j2+1);
+                printf("#");
+                break;
+
+            case 'S':
+                goToXY(i2, j2);
+                printf("+");
+                goToXY(i2+1, j2);
+                printf("=");
+                goToXY(i2+2, j2);
+                printf("=");
+                goToXY(i2+3, j2);
+                printf("+");
+
+                goToXY(i2,j2+1);
+                printf("+");
+                goToXY(i2+1, j2+1);
+                printf("=");
+                goToXY(i2+2, j2+1);
+                printf("=");
+                goToXY(i2+3, j2+1);
+                printf("+");
+                break;
+
+            case ' ':
+                goToXY(i2, j2);
+                printf(" ");
+                goToXY(i2+1, j2);
+                printf(" ");
+                goToXY(i2+2, j2);
+                printf(" ");
+                goToXY(i2+3, j2);
+                printf(" ");
+
+                goToXY(i2,j2+1);
+                printf(" ");
+                goToXY(i2+1, j2+1);
+                printf(" ");
+                goToXY(i2+2, j2+1);
+                printf(" ");
+                goToXY(i2+3, j2+1);
+                printf(" ");
+                break;
+            case 'K':
+                goToXY(i2,j2);
+                printf("(");
+                goToXY(i2+1,j2);
+                printf(" ");
+                goToXY(i2+2,j2);
+                printf("'");
+                goToXY(i2+3,j2);
+                printf(")");
+
+                goToXY(i2,j2+1);
+                printf(" ");
+                goToXY(i2+1,j2+1);
+                printf("-");
+                goToXY(i2+2,j2+1);
+                printf("-");
+                goToXY(i2+3,j2+1);
+                printf(" ");
+                break;
+
+
+            }
+        }
+
+}
+
+void refreshMatriz(char matrix[15][9])
+{
+    int  i, j, i2, j2;
+    char tempArqChar;
+    for(i=0; i<15; i++)
+        for(j=0; j<9; j++)
+        {
+
+            tempArqChar = matrix[i][j];
+            i2 = i*4;
+            j2 = j*2;
+            switch(tempArqChar)
+            {
+            case 'B':
+                goToXY(i2, j2);
+                printf("( ");
+                goToXY(i2+2, j2);
+                printf("0");
+                goToXY(i2+3, j2);
+                printf(")");
+
+                goToXY(i2,j2+1);
+                printf(" ");
+                goToXY(i2+1, j2+1);
+                printf("|");
+                goToXY(i2+2, j2+1);
+                printf("|");
+                goToXY(i2+3, j2+1);
+                printf(" ");
+                break;
+
+            case 'O':
+                goToXY(i2, j2);
+                printf(".");
+                goToXY(i2+1, j2);
+                printf(".");
+                goToXY(i2+2, j2);
+                printf(".");
+                goToXY(i2+3, j2);
+                printf(".");
+
+                goToXY(i2,j2+1);
+                printf(".");
+                goToXY(i2+1, j2+1);
+                printf(".");
+                goToXY(i2+2, j2+1);
+                printf(".");
+                goToXY(i2+3, j2+1);
+                printf(".");
+                break;
+
+            case 'M':
+                goToXY(i2, j2);
+                printf("(");
+                goToXY(i2+1, j2);
+                printf("q");
+                goToXY(i2+2, j2);
+                printf("q");
+                goToXY(i2+3, j2);
+                printf(")");
+
+                goToXY(i2,j2+1);
+                printf("~");
+                goToXY(i2+1, j2+1);
+                printf("~");
+                goToXY(i2+2, j2+1);
+                printf("~");
+                goToXY(i2+3, j2+1);
+                printf("~");
+                break;
+
+            case 'S':
+                goToXY(i2, j2);
+                printf("+");
+                goToXY(i2+1, j2);
+                printf("=");
+                goToXY(i2+2, j2);
+                printf("=");
+                goToXY(i2+3, j2);
+                printf("+");
+
+                goToXY(i2,j2+1);
+                printf("+");
+                goToXY(i2+1, j2+1);
+                printf("=");
+                goToXY(i2+2, j2+1);
+                printf("=");
+                goToXY(i2+3, j2+1);
+                printf("+");
+                break;
+
+            case ' ':
+                goToXY(i2, j2);
+                printf(" ");
+                goToXY(i2+1, j2);
+                printf(" ");
+                goToXY(i2+2, j2);
+                printf(" ");
+                goToXY(i2+3, j2);
+                printf(" ");
+
+                goToXY(i2,j2+1);
+                printf(" ");
+                goToXY(i2+1, j2+1);
+                printf(" ");
+                goToXY(i2+2, j2+1);
+                printf(" ");
+                goToXY(i2+3, j2+1);
+                printf(" ");
+                break;
+            case 'K':
+                goToXY(i2,j2);
+                printf("(");
+                goToXY(i2+1,j2);
+                printf(" ");
+                goToXY(i2+2,j2);
+                printf("'");
+                goToXY(i2+3,j2);
+                printf(")");
+
+                goToXY(i2,j2+1);
+                printf(" ");
+                goToXY(i2+1,j2+1);
+                printf("-");
+                goToXY(i2+2,j2+1);
+                printf("-");
+                goToXY(i2+3,j2+1);
+                printf(" ");
+                break;
+
+            case 'E':
+                goToXY(i2,j2);
+                printf("*");
+                goToXY(i2+1,j2);
+                printf("*");
+                goToXY(i2+2,j2);
+                printf("*");
+                goToXY(i2+3,j2);
+                printf("*");
+
+                goToXY(i2,j2+1);
+                printf("*");
+                goToXY(i2+1,j2+1);
+                printf("*");
+                goToXY(i2+2,j2+1);
+                printf("*");
+                goToXY(i2+3,j2+1);
+                printf("*");
+                break;
+
+            }
+        }
+
+}
+
+void carregarArquivo(char matrix[15][9],int saida[],char nivel[13])
+{
+    FILE *arq;
+    int i, j;
+    char tempGetC;
+    if((arq = fopen(nivel, "r"))!=NULL)
+    {
+        for(j=0; j<9; j++)
+            for(i=0; i<15; i++)
+            {
+                tempGetC = getc(arq);
+                switch(tempGetC)
+                {
+                case 'S':
+                    saida[0]=i;
+                    saida[1]=j;
+                    tempGetC='O';
+                case 'O':
+                case 'P':
+                case 'V':
+                case 'Q':
+                case ' ':
+                case 'M':
+                case 'B':
+
+                case 'R':
+                    matrix[i][j]=tempGetC;
+                    break;
+                case '\n':
+                    i--;
+
+                }
+
+            }
+
+    }
+    else printf("Erro ao tentar ler o arquivo");
+}
+
+void posicaoBomber(TIPO_BOMBER *bomber, char matriz [15][9])
+{
+    int i,j;
+    for(i=0; i<15; i++)
+        for(j=0; j<9; j++)
+        {
+            if(matriz[i][j]=='B')
+            {
+                (*bomber).x = i;
+                (*bomber).y = j;
+            }
+        }
+}
+
+int numeroInimigos(char matriz[15][9])
+{
+    int i,j, nruMonstros=0;
+    for(i=0; i<15; i++)
+        for(j=0; j<9; j++)
+        {
+            if(matriz[i][j]=='M')nruMonstros++;
+        }
+    return nruMonstros;
+}
+
+
+TIPO_INIMIG posicaoInimigo(int cont, char matriz[15][9])
+{
+    int contTemp=0, i=0,j=0;
+    TIPO_INIMIG inimigo;
+    for(i=0; i<15; i++)
+    {
+        for(j=0; j<9; j++)
+        {
+
+            if(matriz[i][j]=='M')contTemp++;
+            if(contTemp==cont)
+            {
+                inimigo.x = i;
+                inimigo.y = j;
+                return inimigo;
+            }
+        }
+
+    }
+
+    return inimigo;
+}
+
+
+int mov_bomber(int*pontbombx,int*pontbomby,int *bombax,int *bombay, int *bombaquant,int *bombatemp,char matriz[15][9])
+{
+    int mov;
+    mov=getch();
+    switch(mov)
+    {
+    case 75:
+        if(*pontbombx>0 && matriz[*pontbombx-1][*pontbomby]!='O'&& matriz[*pontbombx-1][*pontbomby]!='P'&& matriz[*pontbombx-1][*pontbomby]!='K')
+        {
+            if(matriz[*pontbombx][*pontbomby]!='K')matriz[*pontbombx][*pontbomby]=' ';                                                                //esquerda
+            *pontbombx=*pontbombx-1;
+            matriz[*pontbombx][*pontbomby]='B';
+        }
+        break;
+    case 72:
+        if(*pontbomby>0 && matriz[*pontbombx][*pontbomby-1]!='O'&& matriz[*pontbombx][*pontbomby-1]!='P' && matriz[*pontbombx][*pontbomby-1]!='K')
+        {
+            if(matriz[*pontbombx][*pontbomby]!='K')matriz[*pontbombx][*pontbomby]=' ';                                                               //cima
+            *pontbomby=*pontbomby-1;
+            matriz[*pontbombx][*pontbomby]='B';
+        }
+        break;
+    case 77:
+        if(*pontbombx<14 && matriz[*pontbombx+1][*pontbomby]!='O'&& matriz[*pontbombx+1][*pontbomby]!='P' && matriz[*pontbombx+1][*pontbomby]!='K')
+        {
+            if(matriz[*pontbombx][*pontbomby]!='K')matriz[*pontbombx][*pontbomby]=' ';                                                                 //direita
+            *pontbombx=*pontbombx+1;
+            matriz[*pontbombx][*pontbomby]='B';
+        }
+        break;
+    case 80:
+        if(*pontbomby<8 && matriz[*pontbombx][*pontbomby+1]!='O'&& matriz[*pontbombx][*pontbomby+1]!='P' && matriz[*pontbombx][*pontbomby+1]!='K')
+        {
+            if(matriz[*pontbombx][*pontbomby]!='K')matriz[*pontbombx][*pontbomby]=' ';                                                                   //baixo
+            *pontbomby=*pontbomby+1;
+            matriz[*pontbombx][*pontbomby]='B';
+        }
+        break;
+    case 32:
+        if(*bombaquant==0)
+        {
+            *bombax=*pontbombx;
+            *bombay=*pontbomby;
+            *bombaquant=*bombaquant+1;
+            matriz[*bombax][*bombay]='K';
+            *bombatemp=clock();
+        }
+        break;
+    case 27:
+        mov=27;
+
+    }
+
+    return mov;
+}
+
+void explodeBomba(int *bombax,int *bombay,TIPO_INIMIG vetInimigos[], int nruInimigos,char matriz[15][9],int saida[])
+{
+    int cont;
+    matriz[*bombax][*bombay]='E';
+    if( matriz[*bombax+1][*bombay]!='P'&& *bombax+1<15) matriz[*bombax+1][*bombay]='E';
+    if( matriz[*bombax-1][*bombay]!='P' && *bombax-1>=0)matriz[*bombax-1][*bombay]='E';
+    if( matriz[*bombax][*bombay+1]!='P' && *bombay+1<9)matriz[*bombax][*bombay+1]='E';
+    if( matriz[*bombax][*bombay-1]!='P'&& *bombay-1>=0)matriz[*bombax][*bombay-1]='E';
+
+    if(matriz[*bombax+1][*bombay] == matriz[saida[0]][saida[1]]) matriz[*bombax+1][*bombay]='S';
+    if(matriz[*bombax-1][*bombay] == matriz[saida[0]][saida[1]]) matriz[*bombax-1][*bombay]='S';
+    if(matriz[*bombax][*bombay+1] == matriz[saida[0]][saida[1]]) matriz[*bombax][*bombay+1]='S';
+    if(matriz[*bombax][*bombay-1] == matriz[saida[0]][saida[1]]) matriz[*bombax][*bombay-1]='S';
+    for(cont=0; cont<nruInimigos; cont++)
+    {
+        if(vetInimigos[cont].x == *bombax+1 && vetInimigos[cont].y == *bombay)
+        {
+            vetInimigos[cont].vivo=0;
+            vetInimigos[cont].x=16;
+            vetInimigos[cont].y=10;
+        }
+        if(vetInimigos[cont].x == *bombax-1 && vetInimigos[cont].y == *bombay)
+        {
+            vetInimigos[cont].vivo=0;
+            vetInimigos[cont].x=16;
+            vetInimigos[cont].y=10;
+        }
+        if(vetInimigos[cont].x == *bombax && vetInimigos[cont].y == *bombay+1)
+        {
+            vetInimigos[cont].vivo=0;
+            vetInimigos[cont].x=16;
+            vetInimigos[cont].y=10;
+        }
+        if(vetInimigos[cont].x == *bombax && vetInimigos[cont].y == *bombay-1)
+        {
+            vetInimigos[cont].vivo=0;
+            vetInimigos[cont].x=16;
+            vetInimigos[cont].y=10;
+        }
+    }
+}
+
+int mov_inimigo(int*pontinimix,int*pontinimiy, int *pontinimiVida, char matriz[15][9])
+{
+    if(*pontinimiVida)
+    {
+        int numaleatorio;
+        srand(time(NULL));
+        numaleatorio=1+(rand()%(4-1+1));
+        switch(numaleatorio)
+        {
+        case 1:
+            if(*pontinimix>0 && matriz[*pontinimix-1][*pontinimiy]!='O'&& matriz[*pontinimix-1][*pontinimiy]!='P'
+                    && matriz[*pontinimix-1][*pontinimiy]!='M'&& matriz[*pontinimix-1][*pontinimiy]!='K'&& matriz[*pontinimix-1][*pontinimiy]!='S')
+            {
+                matriz[*pontinimix][*pontinimiy]=' ';                                                                //esquerda
+                *pontinimix=*pontinimix-1;
+                matriz[*pontinimix][*pontinimiy]='M';
+            }
+            break;
+        case 2:
+            if(*pontinimiy>0 && matriz[*pontinimix][*pontinimiy-1]!='O'&& matriz[*pontinimix][*pontinimiy-1]!='P'
+                    && matriz[*pontinimix][*pontinimiy-1]!='M'&& matriz[*pontinimix][*pontinimiy-1]!='K'&& matriz[*pontinimix][*pontinimiy-1]!='S' )
+            {
+                matriz[*pontinimix][*pontinimiy]=' ';                                                                 //cima
+                *pontinimiy=*pontinimiy-1;
+                matriz[*pontinimix][*pontinimiy]='M';
+            }
+            break;
+        case 3:
+            if(*pontinimix<14 && matriz[*pontinimix+1][*pontinimiy]!='O'&& matriz[*pontinimix+1][*pontinimiy]!='P'
+                    && matriz[*pontinimix+1][*pontinimiy]!='M'&& matriz[*pontinimix+1][*pontinimiy]!='K'&& matriz[*pontinimix+1][*pontinimiy]!='S')
+            {
+                matriz[*pontinimix][*pontinimiy]=' ';                                                                 //direita
+                *pontinimix=*pontinimix+1;
+                matriz[*pontinimix][*pontinimiy]='M';
+            }
+            break;
+        case 4:
+            if(*pontinimiy<8 && matriz[*pontinimix][*pontinimiy+1]!='O'&& matriz[*pontinimix][*pontinimiy+1]!='P'
+                    && matriz[*pontinimix][*pontinimiy+1]!='M'&& matriz[*pontinimix][*pontinimiy+1]!='K'&& matriz[*pontinimix][*pontinimiy+1]!='S')
+            {
+                matriz[*pontinimix][*pontinimiy]=' ';                                                                   //baixo
+                *pontinimiy=*pontinimiy+1;
+                matriz[*pontinimix][*pontinimiy]='M';
+            }
+            break;
+        }
+    }
+}
+
+void imprimirTempo(int x, int y, int tempoFase){
+    goToXY(x, y);
+    printf("%d",tempoFase);
+}
+
+void imprimirTabelaLateral(){
+    int i,j;
+
+    for(i=61; i<75; i++){
+        goToXY(i,0);
+        printf("-");
+    }
+    for(i=61; i<75; i++){
+        goToXY(i,16);
+        printf("-");
+    }
+    for(i=0; i<17; i++){
+        goToXY(61,i);
+        printf("|");
+    }
+    for(i=0; i<17; i++){
+        goToXY(75,i);
+        printf("|");
+    }
+    goToXY(66,3);
+    printf("Tempo:");
+    goToXY(65, 6);
+    printf("Vida(s):");
+}
+
+void mudarVidaTabela(int vida){
+    goToXY(68, 7);
+    printf("%d",vida);
+}
+
+void limpatela()
+{
+    int i,j;
+    for(i=0;i<100;i++)
+        {
+            for(j=0;j<20;j++)
+            {
+                goToXY(i,j);
+                printf(" ");
+            }
+        }
+}
+
+
+int main()
+{
+    int k, l, cont, nruInimigos, i, j,saida[2],N,respmenu,tempoFase, tempoMudarRelogio=1000;
+    char matriz[15][9]= {" "},nivel[13]= {'n','i','v','e','l','1','.','t','x','t','\0'};
+    TIPO_BOMBER bomber;
+    TIPO_BOMBA bomb;
+    TIPO_BOMBA bomba;
+    do
+    {
+        limpatela();
+        goToXY(0,0);
+        respmenu=0;
+        printf("Bomberman\n\n1-Novo Jogo\n2-Carregar Jogo\n3-Sair\n");
+        scanf("%d",&respmenu);
+        switch(respmenu)
+        {
+        case 1:
+
+
+
+
+            do
+            {
+                N=1;
+                carregarArquivo(matriz,saida,nivel);posicaoBomber(&bomber, matriz);
+                nruInimigos = numeroInimigos(matriz);
+                TIPO_INIMIG vetInimigo[nruInimigos];
+                bomba.quantidade=0;
+                bomber.vida = 3;
+                tempoFase = clock();
+                imprimirTabelaLateral();
+                mudarVidaTabela(bomber.vida);
+
+
+                for(cont = 0; cont<nruInimigos; cont++)
+                {
+                    vetInimigo[cont] = posicaoInimigo((cont+1), matriz);        //seta a posição dos inimigos
+                    vetInimigo[cont].vivo = 1;
+                }
+                imprimir(matriz);
+
+                do
+                {
+                    int i,j;
+                    refreshMatriz(matriz);
+                    imprimirTempo(67, 4,180);
+                    tempoMudarRelogio=1000;
+                    if((tempoFase+180000)-clock()>=tempoMudarRelogio){
+                    imprimirTempo(67, 4,((tempoFase+180000)-clock())/1000);          //conrole do tempo da fase
+                    tempoMudarRelogio+=1000;
+                    }
+                    //Sleep(60);
+
+
+                    if(kbhit())
+                    {
+                        respmenu=mov_bomber(&bomber.x, &bomber.y,&bomba.x,&bomba.y, &bomba.quantidade,&bomba.tempo,matriz);
+
+                    }
+                    if(respmenu==27)
+                    {
+                        goToXY(10,7);
+                        printf("-----------------------------------\n\t|1-Salvar e Sair\t2-Sair\t3-Cancelar|\n-----------------------------------");
+                        scanf("%d",&respmenu);
+                        switch(respmenu)
+                        {
+                        case 1:
+                        case 2:
+                            respmenu=101;
+
+                        }
+                    }
+                    for(i=0; i<nruInimigos; i++)
+                    {
+                        mov_inimigo(&vetInimigo[i].x, &vetInimigo[i].y,&vetInimigo[i].vivo ,matriz);
+                    }
+                    for(i=0; i<nruInimigos; i++)
+                    {
+                        if(vetInimigo[i].x == bomber.x && vetInimigo[i].y == bomber.y || matriz[bomber.x][bomber.y]=='E')
+                        {
+                            carregarArquivo(matriz,saida,nivel);
+                            posicaoBomber(&bomber, matriz);
+                            for(cont = 0; cont<nruInimigos; cont++)
+                            {
+                                vetInimigo[cont] = posicaoInimigo((cont+1), matriz);        //seta a posição dos inimigos
+                            }
+                            bomber.vida--;
+                            mudarVidaTabela(bomber.vida);
+                        }
+                    }
+                    if(bomba.quantidade!=0)
+                    {
+                        if(clock()>bomba.tempo+2000)
+                        {
+                            explodeBomba(&bomba.x,&bomba.y,vetInimigo,nruInimigos,matriz,saida);
+                            bomba.quantidade--;
+                        }
+                    }
+                    else if(clock()>bomba.tempo+2250)
+                    {
+                        for(i=0; i<15; i++)
+                        {
+                            for(j=0; j<9; j++)
+                            {
+                                if(matriz[i][j]=='E')
+                                {
+                                    matriz[i][j]=' ';
+                                }
+                            }
+                        }
+                    }
+                }
+                while(bomber.vida>0 && matriz[bomber.x][bomber.y]!=matriz[saida[0]][saida[1]] && respmenu!=101);
+                if(matriz[bomber.x][bomber.y] == matriz[saida[0]][saida[1]])
+                {
+                    N++;
+                    switch(N)
+                    {
+                    case 1:
+                        nivel[5]='1';
+                        break;
+                    case 2:
+                        nivel[5]='2';
+                        break;
+                    case 3:
+                        nivel[5]='3';
+                        break;
+                    case 4:
+                        nivel[5]='4';
+                        break;
+                    case 5:
+                        nivel[5]='5';
+                    }
+
+                }
+
+            }
+            while(respmenu!=101 && bomber.vida>0);
+            limpatela();
+            goToXY(34,7);
+            printf("SE FODEO");
+            Sleep(3000);
+
+        }
+
+
+    }
+    while(respmenu!=3);
+        return 0;
+}
